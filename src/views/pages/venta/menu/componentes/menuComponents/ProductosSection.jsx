@@ -71,7 +71,7 @@ export default function ProductosSection({
           overflowY: "auto",
           maxHeight: "70vh",
           pr: 1,
-
+          /* 🎨 Scrollbar personalizado dependiente del tema */
           "&::-webkit-scrollbar": {
             width: "8px",
           },
@@ -89,24 +89,35 @@ export default function ProductosSection({
                 : theme.palette.primary.main,
             borderRadius: "4px",
           },
+          "&::-webkit-scrollbar-thumb:hover": {
+            backgroundColor:
+              theme.palette.mode === "dark"
+                ? theme.palette.primary.light
+                : theme.palette.primary.dark,
+          },
         })}
       >
         <Grid container spacing={2}>
+          {/* Si no hay productos */}
           {productosFiltrados.length === 0 ? (
-            <Grid size={12}>
+            <Grid item xs={12}>
               <p>No hay productos disponibles en esta categoría</p>
             </Grid>
           ) : (
+            // 🔢 Orden natural: 1, 2, 3, 10, 11, 12...
             [...productosFiltrados]
               .sort((a, b) => {
                 const codeA = String(a.code);
                 const codeB = String(b.code);
 
+                // Extraer parte numérica de los códigos
                 const numA = parseInt(codeA.match(/\d+/)?.[0] || "0", 10);
                 const numB = parseInt(codeB.match(/\d+/)?.[0] || "0", 10);
 
+                // Si ambos tienen números, ordenar por número
                 if (numA !== numB) return numA - numB;
 
+                // Si son iguales o no tienen número, ordenar alfabéticamente
                 return codeA.localeCompare(codeB, undefined, { numeric: true });
               })
               .map((product) => {
@@ -116,7 +127,7 @@ export default function ProductosSection({
                     Number(product.stock_actual) <= 0);
 
                 return (
-                  <Grid size={{ xs: 6, md: 3 }} key={product.id}>
+                  <Grid item xs={6} md={3} key={product.id}>
                     <ProductoCard
                       product={product}
                       onClick={() => !disabled && handleAddToCart(product)}
